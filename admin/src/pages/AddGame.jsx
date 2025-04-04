@@ -1,17 +1,19 @@
 import React, { useState } from "react";
-import { Box, Button, TextField, Typography, Grid, Card, CardMedia, IconButton } from "@mui/material";
-import { CloudUpload, Delete } from "@mui/icons-material";
+import { Box, Button, TextField, Typography, Grid, Card, CardMedia, IconButton, MenuItem } from "@mui/material";
+import { CloudUpload, Delete, AddCircle } from "@mui/icons-material";
+
+const gameCategories = ["Popular","FPS", "MOBA", "Battle Royale", "RPG", "Adventure", "Strategy", "Simulation", "Sports", "Horror", "Indie"]
 
 const AddGame = () => {
   const [gameData, setGameData] = useState({
     name: "",
     image: "",
-    category: "",
+    category: "Popular",
     description: "",
     publisher: "",
     releaseDate: "",
     rating: "",
-    cutyLink: "",
+    cutyLinks: [""],
   });
 
   const handleChange = (e) => {
@@ -24,6 +26,16 @@ const AddGame = () => {
       const imageUrl = URL.createObjectURL(file);
       setGameData({ ...gameData, image: imageUrl });
     }
+  };
+
+  const handleAddCutyLink = () => {
+    setGameData({ ...gameData, cutyLinks: [...gameData.cutyLinks, ""] });
+  };
+
+  const handleCutyLinkChange = (index, value) => {
+    const updatedLinks = [...gameData.cutyLinks];
+    updatedLinks[index] = value;
+    setGameData({ ...gameData, cutyLinks: updatedLinks });
   };
 
   return (
@@ -59,7 +71,13 @@ const AddGame = () => {
 
         {/* Category & Rating */}
         <Grid item xs={12}>
-          <TextField fullWidth label="Category" name="category" value={gameData.category} onChange={handleChange} />
+          <TextField select fullWidth label="Category" name="category" value={gameData.category} onChange={handleChange}>
+            {gameCategories.map((category) => (
+              <MenuItem key={category} value={category}>
+                {category}
+              </MenuItem>
+            ))}
+          </TextField>
         </Grid>
         <Grid item xs={12}>
           <TextField fullWidth label="Rating" name="rating" value={gameData.rating} onChange={handleChange} type="number" />
@@ -78,10 +96,18 @@ const AddGame = () => {
           <TextField fullWidth label="Release Date" name="releaseDate" value={gameData.releaseDate} onChange={handleChange} type="date" InputLabelProps={{ shrink: true }} />
         </Grid>
 
-        {/* Cuty.io Link */}
-        <Grid item xs={12}>
-          <TextField fullWidth label="Cuty.io Link" name="cutyLink" value={gameData.cutyLink} onChange={handleChange} />
+        {/* Cuty.io Links */}
+        <Grid item xs={12} sx={{ display: "flex", alignItems: "center" }}>
+          <Typography sx={{ flexGrow: 1 }}>Cuty.io Links</Typography>
+          <IconButton onClick={handleAddCutyLink} color="primary">
+            <AddCircle />
+          </IconButton>
         </Grid>
+        {gameData.cutyLinks.map((link, index) => (
+          <Grid item xs={12} key={index}>
+            <TextField fullWidth label={`Cuty.io Link ${index + 1}`} value={link} onChange={(e) => handleCutyLinkChange(index, e.target.value)} />
+          </Grid>
+        ))}
 
         {/* Submit Button */}
         <Grid item xs={12}>

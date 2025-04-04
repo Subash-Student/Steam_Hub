@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, IconButton, Tooltip, TextField, Select, MenuItem, InputLabel, FormControl, Menu } from "@mui/material";
 import { ArrowUpward, ArrowDownward, Search, MoreVert } from "@mui/icons-material";
-import { useTheme, useMediaQuery } from '@mui/material';
-
 
 const games = [
   { id: 1, image: "game1.jpg", name: "Cyberpunk 2077", category: "RPG", accounts: 5, clicks: 120, trend: "up", added: "2024-04-01" },
@@ -10,11 +8,7 @@ const games = [
   { id: 3, image: "game3.jpg", name: "GTA V", category: "Open World", accounts: 8, clicks: 200, trend: "up", added: "2024-03-20" },
 ];
 
-const ManageGames = () => {
-
-    // Inside your component:
-const theme = useTheme();
-const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+const GameList = () => {
   const [sortConfig, setSortConfig] = useState({ key: "id", direction: "asc" });
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
@@ -73,63 +67,43 @@ const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
         </FormControl>
       </Box>
 
-      <TableContainer 
-  component={Paper} 
-  sx={{ 
-    background: "#eaeaea", 
-    borderRadius: "10px", 
-    border: "0.5px solid #d9d9d9",
-    overflowX: 'auto' // Allows horizontal scrolling on small screens
-  }}
->
-  <Table sx={{ minWidth: isMobile ? 600 : 'auto' }}> {/* Force minimum width on mobile */}
-    <TableHead>
-      <TableRow>
-        {["No", "Image", "Name", "Category", "Accounts", "Clicks", "Added Date"].map((label, index) => (
-          <TableCell 
-            key={index} 
-            sx={{ 
-              color: "#000000", 
-              fontWeight: "bold", 
-              cursor: "pointer",
-              fontSize: isMobile ? '0.75rem' : '0.875rem' // Smaller font on mobile
-            }} 
-            onClick={() => handleSort(label.toLowerCase())}
-          >
-            {label}
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {sortedGames.map((game) => (
-        <TableRow key={game.id} sx={{ '&:hover': { backgroundColor: "#ddd" } }}>
-          <TableCell sx={{ fontSize: isMobile ? '0.75rem' : '0.875rem' }}>{game.id}</TableCell>
-          <TableCell>
-            <Tooltip title={<img src={game.image} alt={game.name} style={{ width: 150 }} />}>
-              <img 
-                src={game.image} 
-                alt={game.name} 
-                width={isMobile ? 40 : 50} 
-                height={isMobile ? 40 : 50} 
-                style={{ borderRadius: "5px" }} 
-              />
-            </Tooltip>
-          </TableCell>
-          <TableCell sx={{ fontSize: isMobile ? '0.75rem' : '0.875rem' }}>{game.name}</TableCell>
-          <TableCell sx={{ fontSize: isMobile ? '0.75rem' : '0.875rem' }}>{game.category}</TableCell>
-          <TableCell sx={{ fontSize: isMobile ? '0.75rem' : '0.875rem' }}>{game.accounts}</TableCell>
-          <TableCell sx={{ fontSize: isMobile ? '0.75rem' : '0.875rem' }}>
-            {game.clicks} {game.trend === "up" ? 
-              <ArrowUpward sx={{ color: "#4caf50", fontSize: isMobile ? '1rem' : '1.25rem' }} /> : 
-              <ArrowDownward sx={{ color: "#f44336", fontSize: isMobile ? '1rem' : '1.25rem' }} />}
-          </TableCell>
-          <TableCell sx={{ fontSize: isMobile ? '0.75rem' : '0.875rem' }}>{game.added}</TableCell>
-        </TableRow>
-      ))}
-    </TableBody>
-  </Table>
-</TableContainer>
+      <TableContainer component={Paper} sx={{ background: "#eaeaea", borderRadius: "10px", border:"0.5px solid #d9d9d9" }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              {["No", "Image", "Name", "Category", "Accounts", "Clicks", "Added Date", "Actions"].map((label, index) => (
+                <TableCell key={index} sx={{ color: "#000000", fontWeight: "bold", cursor: "pointer" }} onClick={() => handleSort(label.toLowerCase())}>
+                  {label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {sortedGames.map((game) => (
+              <TableRow key={game.id} sx={{ '&:hover': { backgroundColor: "#ddd" } }}>
+                <TableCell>{game.id}</TableCell>
+                <TableCell>
+                  <Tooltip title={<img src={game.image} alt={game.name} style={{ width: 150 }} />}>
+                    <img src={game.image} alt={game.name} width={50} height={50} style={{ borderRadius: "5px" }} />
+                  </Tooltip>
+                </TableCell>
+                <TableCell>{game.name}</TableCell>
+                <TableCell>{game.category}</TableCell>
+                <TableCell>{game.accounts}</TableCell>
+                <TableCell>
+                  {game.clicks} {game.trend === "up" ? <ArrowUpward sx={{ color: "#4caf50" }} /> : <ArrowDownward sx={{ color: "#f44336" }} />}
+                </TableCell>
+                <TableCell>{game.added}</TableCell>
+                <TableCell>
+                  <IconButton onClick={(event) => handleMenuOpen(event, game)}>
+                    <MoreVert />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={handleMenuClose}>
         <MenuItem onClick={() => alert(`Edit ${selectedGame?.name}`)}>Edit</MenuItem>
@@ -139,4 +113,4 @@ const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   );
 };
 
-export default ManageGames;
+export default GameList;
