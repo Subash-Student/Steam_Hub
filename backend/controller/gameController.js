@@ -1,6 +1,5 @@
-import logger from 'internal-logger-module';
-import gameModel from "../model/gameModel";
-import cloudinary from "../config/cloudinary";
+import gameModel from "../model/gameModel.js";
+import cloudinary from "../config/cloudinary.js";
 import bcrypt from "bcryptjs"
 
 // Get all games
@@ -12,6 +11,8 @@ export const getAllGames = async (req, res) => {
     res.status(500).json({ message: "Error fetching games", error });
   }
 };
+
+
 
 // Get single game by ID
 export const getGameById = async (req, res) => {
@@ -26,7 +27,7 @@ export const getGameById = async (req, res) => {
 
     res.status(200).json(game);
   } catch (error) {
-    logger.error('Error fetching game:', error);
+    console.error('Error fetching game:', error);
     res.status(500).json({ message: "Error fetching game", error });
   }
 };
@@ -55,7 +56,7 @@ export const adminLogin = async (req, res) => {
       if (sanitizedUsername === adminUser.username && sanitizedPassword === adminUser.password) {
         return res.status(200).json({ message: "Login successful" });
       }
-      logger.warn(`Failed login attempt for username: ${sanitizedUsername}`);
+      console.warn(`Failed login attempt for username: ${sanitizedUsername}`);
       res.status(401).json({ message: "Invalid credentials" });
     } catch (error) {
       res.status(500).json({ message: "Login error", error });
@@ -77,8 +78,10 @@ export const addGame = async (req, res) => {
     if (!req.file) return res.status(400).json({ message: "Image file is required" });
     
     const imageFile = req.files?.image ? req.files.image[0] : null;
-
-    const imagePath = await handleFileUpload(imageFile, uploadImage, "Image");
+    let imagePath ="";
+    if(imageFile){
+       imagePath = await handleFileUpload(imageFile, uploadImage, "Image");
+    }
 
     const newGame = new Game({
       name,
@@ -96,7 +99,7 @@ export const addGame = async (req, res) => {
     await newGame.save();
     res.status(201).json({ message: "Game added successfully", game: newGame });
   } catch (error) {
-    logger.error("Error adding game", error);
+    console.error("Error adding game", error);
     res.status(500).json({ message: "Error adding game", error });
   }
 };
@@ -126,7 +129,7 @@ export const editGame = async (req, res) => {
     await res.status(200).json({ message: "Game updated successfully", game: updatedGame });
 
   } catch (error) {
-    logger.error("Error updating game:", error);
+    console.error("Error updating game:", error);
     res.status(500).json({ message: "Error updating game", error });
   }
 };
@@ -148,7 +151,7 @@ export const deleteGame = async (req, res) => {
     res.status(200).json({ message: "Game deleted successfully" });
 
   } catch (error) {
-    logger.error("Error deleting game", error);
+    console.error("Error deleting game", error);
     res.status(500).json({ message: `Failed to delete game with ID: ${req.params.id}`, error });
   }
 };

@@ -1,7 +1,7 @@
 import express from "express"
 import multer from "multer"
 import rateLimit from 'express-rate-limit';
-import { addGame, adminLogin, deleteGame, editGame, getAllGames, getGameById } from "../controller/gameController";
+import { addGame, adminLogin, deleteGame, editGame, getAllGames, getGameById } from "../controller/gameController.js";
 
 
 const router = express.Router();
@@ -12,7 +12,7 @@ const router = express.Router();
 // Create rate limiter middleware
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 50, // Limit each IP to 100 requests per windowMs
+  max: 100, // Limit each IP to 100 requests per windowMs
   message: 'Too many requests from this IP, please try again after 15 minutes',
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
