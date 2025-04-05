@@ -81,7 +81,11 @@ const GameList = () => {
     if (!confirm) return;
   
     try {
-      await axios.delete(`http://localhost:5000/api/delete-game/${id}`);
+      await axios.delete(`http://localhost:5000/api/delete-game/${id}`,{
+        headers:{
+          token:localStorage.getItem("token")
+        }
+      });
       alert("Game deleted successfully");
      
       queryClient.invalidateQueries(["games"])

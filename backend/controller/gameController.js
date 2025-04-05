@@ -2,6 +2,10 @@ import gameModel from "../model/gameModel.js";
 import cloudinary from "../config/cloudinary.js";
 import bcrypt from "bcryptjs"
 import streamifier from "streamifier"
+import dotenv from "dotenv";
+dotenv.config()
+import jwt from "jsonwebtoken"
+
 
 // Get all games
 export const getAllGames = async (req, res) => {
@@ -41,21 +45,23 @@ function isValidIdFormat(id) {
 // Admin login (basic example)
 export const adminLogin = async (req, res) => {
 
-    const { username, password } = req.body;
+    const { email, password } = req.body;
   
+    
     // Basic input validation and sanitization
-    if (typeof username !== 'string' || typeof password !== 'string') {
+    if (typeof email !== 'string' || typeof password !== 'string') {
       return res.status(400).json({ message: "Invalid input type" });
     }
   
-    const sanitizedUsername = username.trim();
+    const sanitizedUsername = email.trim();
     const sanitizedPassword = password.trim();
     
     const adminUser = { username: process.env.ADMIN_USERNAME, password: process.env.ADMIN_PASSWORD }; // Hashed password
-  
+   const isMatch =  bcrypt.compare(sanitizedPassword,adminUser.password);
     try {
-      if (sanitizedUsername === adminUser.username && sanitizedPassword === adminUser.password) {
-        return res.status(200).json({ message: "Login successful" });
+      if (sanitizedUsername === adminUser.username &&isMatch) {
+        const token = jwt.sign(sanitizedUsername,process.env.JWTSECRET)
+        return res.status(200).json({ message: "Login successful",token:token });
       }
       console.warn(`Failed login attempt for username: ${sanitizedUsername}`);
       res.status(401).json({ message: "Invalid credentials" });

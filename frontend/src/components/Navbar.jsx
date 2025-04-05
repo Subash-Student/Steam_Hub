@@ -11,7 +11,11 @@ const Navbar = () => {
         <div>
             <AppBar position="static" sx={{ background: "#1f1f1f" }}>
                 <Toolbar>
-                    <GameIcon onClick={() => navigate("/")} sx={{ mr: 2, fontSize: 30, color: "#ff9800" }} />
+                <img 
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQ_WQMSRe-FWclMWbJlSj8c7Tv-5ws55Aqgw&s" 
+            alt="logo" 
+            style={{ marginRight: 8, borderRadius: '50%', width: '45px' }}
+          />
                     <Typography onClick={() => navigate("/")} variant="h6" sx={{ flexGrow: 1, fontWeight: "bold", fontSize: "1.5rem", cursor: "pointer" }}>
                         Steam Hub
                     </Typography>

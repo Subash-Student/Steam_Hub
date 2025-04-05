@@ -118,7 +118,11 @@ const AddGame = () => {
         : "http://localhost:5000/api/add-game";
 
       const method = isEditMode ? axios.put : axios.post;
-      const response = await method(url, formData);
+      const response = await method(url, formData,{
+        headers:{
+          token:localStorage.getItem("token")
+        }
+      });
 
       if (response.data.status) {
         alert(response.data.message);
@@ -150,7 +154,7 @@ const AddGame = () => {
     }
   };
 
-  
+
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>

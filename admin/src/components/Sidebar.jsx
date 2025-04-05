@@ -18,6 +18,11 @@ const Sidebar = () => {
         { text: "Manage Games", icon: <Edit />, path: "/manage-games" }
     ];
 
+    const logOut = ()=>{
+        localStorage.removeItem("token");
+        navigate("/login")
+    }
+
     return (
         <Drawer 
             variant="permanent" 
@@ -61,7 +66,7 @@ const Sidebar = () => {
                             <ListItemIcon sx={{ color: "black", minWidth: 0, mr: open ? 2 : "auto" }}> {/* Changed to black */}
                                 <Logout />
                             </ListItemIcon>
-                            {open && <ListItemText primary="Logout" />}
+                            {open && <ListItemText onClick={logOut} primary="Logout" />}
                         </ListItemButton>
                     </Tooltip>
                 </ListItem>

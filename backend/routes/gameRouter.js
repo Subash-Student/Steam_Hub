@@ -2,6 +2,7 @@ import express from "express"
 import multer from "multer"
 import rateLimit from 'express-rate-limit';
 import { addGame, adminLogin, deleteGame, editGame, getAllGames, getGameById } from "../controller/gameController.js";
+import authMiddleware from "../middleware/auth.js";
 
 
 const router = express.Router();
@@ -22,9 +23,9 @@ router.get("/all-games",apiLimiter,getAllGames);
 router.get("/game/:id",apiLimiter,getGameById);
 
 router.post("/admin-login",apiLimiter,adminLogin);
-router.post("/add-game",multer().single("imageFile"),apiLimiter,addGame);
-router.put("/edit-game/:id",multer().single("imageFile"),apiLimiter,editGame);
-router.delete("/delete-game/:id",apiLimiter,deleteGame);
+router.post("/add-game",multer().single("imageFile"),authMiddleware,apiLimiter,addGame);
+router.put("/edit-game/:id",multer().single("imageFile"),authMiddleware,apiLimiter,editGame);
+router.delete("/delete-game/:id",apiLimiter,authMiddleware,deleteGame);
 
 
 export default router;
