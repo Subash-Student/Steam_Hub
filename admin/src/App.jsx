@@ -8,6 +8,7 @@ import ManageGames from "./pages/ManageGames";
 import AddGame from "./pages/AddGame";
 
 
+
 function App() {
   return (
     <>
@@ -19,8 +20,7 @@ function App() {
             <Route path="/" element={<DashBoard />} />
             <Route path="/games" element={<GameList />} />
             <Route path="/manage-games" element={<ManageGames />} />
-            <Route path="/add-game" element={<AddGame />} />
-            {/* <Route path="/games/edit/:id" element={<EditGame />} /> */}
+            <Route path="/add-game/:id" element={<AddGame />} />
           </Routes>
         </Box>
       </Box>

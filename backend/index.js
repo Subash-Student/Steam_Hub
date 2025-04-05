@@ -18,10 +18,7 @@ const PORT = process.env.PORT;
 // SETUP MIDDLEWARES
 
 app.use(express.json());
-app.use(cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST","DELETE"],
-  },));
+app.use(cors());
 
 
 

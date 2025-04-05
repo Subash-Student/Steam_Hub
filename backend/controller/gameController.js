@@ -1,6 +1,7 @@
 import gameModel from "../model/gameModel.js";
 import cloudinary from "../config/cloudinary.js";
 import bcrypt from "bcryptjs"
+import streamifier from "streamifier"
 
 // Get all games
 export const getAllGames = async (req, res) => {
@@ -25,7 +26,7 @@ export const getGameById = async (req, res) => {
     const game = await gameModel.findById(gameId);
     if (!game) return res.status(404).json({ message: "Game not found" });
 
-    res.status(200).json(game);
+    res.status(200).json({game});
   } catch (error) {
     console.error('Error fetching game:', error);
     res.status(500).json({ message: "Error fetching game", error });
@@ -66,48 +67,68 @@ export const adminLogin = async (req, res) => {
 // Add a new game with Cloudinary image upload
 export const addGame = async (req, res) => {
   try {
-    const { name, category, description, publisher, releaseDate, rating, cutyLinks, accounts, clicks, } = req.body;
-    
-    // Validate input fields
-    if (!name || typeof name !== 'string') return res.status(400).json({ message: "Invalid or missing 'name'" });
-    if (!category || typeof category !== 'string') return res.status(400).json({ message: "Invalid or missing 'category'" });
-    if (!description || typeof description !== 'string') return res.status(400).json({ message: "Invalid or missing 'description'" });
-    if (!publisher || typeof publisher !== 'string') return res.status(400).json({ message: "Invalid or missing 'publisher'" });
-    if (!releaseDate || isNaN(Date.parse(releaseDate))) return res.status(400).json({ message: "Invalid or missing 'releaseDate'" });
-    if (!rating || typeof rating !== 'number') return res.status(400).json({ message: "Invalid or missing 'rating'" });
-    if (!req.file) return res.status(400).json({ message: "Image file is required" });
-    
-    const imageFile = req.files?.image ? req.files.image[0] : null;
-    let imagePath ="";
-    if(imageFile){
-       imagePath = await handleFileUpload(imageFile, uploadImage, "Image");
-    }
-
-    const newGame = new Game({
+    const {
       name,
-      image:imagePath,
       category,
       description,
       publisher,
       releaseDate,
       rating,
-      cutyLinks: cutyLinks ? cutyLinks.split(",") : [],
-      accounts,
-      clicks,
-    
+      cutyLinks,
+    } = req.body;
+
+    // Validate input
+    if (!name || typeof name !== 'string') return res.status(400).json({ message: "Invalid or missing 'name'" });
+    if (!category || typeof category !== 'string') return res.status(400).json({ message: "Invalid or missing 'category'" });
+    if (!description || typeof description !== 'string') return res.status(400).json({ message: "Invalid or missing 'description'" });
+    if (!publisher || typeof publisher !== 'string') return res.status(400).json({ message: "Invalid or missing 'publisher'" });
+    if (!releaseDate || isNaN(Date.parse(releaseDate))) return res.status(400).json({ message: "Invalid or missing 'releaseDate'" });
+
+    const parsedRating = parseFloat(rating);
+    if (isNaN(parsedRating)) return res.status(400).json({ message: "Invalid or missing 'rating'" });
+
+    // Handle file
+    const imageFile = req.file  || null;
+    if (!imageFile) return res.status(400).json({ message: "Image file is required" });
+
+    const imagePath = await handleFileUpload(imageFile, uploadImage, "Image");
+
+    // Parse cutyLinks (handle if it's already an array or stringified)
+    let parsedLinks = [];
+    if (Array.isArray(cutyLinks)) {
+      parsedLinks = cutyLinks;
+    } else if (typeof cutyLinks === "string") {
+      try {
+        const temp = JSON.parse(cutyLinks);
+        parsedLinks = Array.isArray(temp) ? temp : temp.split(",");
+      } catch (err) {
+        parsedLinks = cutyLinks.split(",");
+      }
+    }
+
+    const newGame = new gameModel({
+      name,
+      image: imagePath,
+      category,
+      description,
+      publisher,
+      releaseDate,
+      rating: parsedRating,
+      cutyLinks: parsedLinks,
     });
+
     await newGame.save();
-    res.status(201).json({ message: "Game added successfully", game: newGame });
+
+    res.status(200).json({success:true, message: "Game added successfully", game: newGame });
   } catch (error) {
     console.error("Error adding game", error);
-    res.status(500).json({ message: "Error adding game", error });
+    res.status(500).json({ message: "Error adding game", error: error.message });
   }
 };
 
-// Edit game details
+
 export const editGame = async (req, res) => {
   try {
-
     const gameId = req.params.id;
     if (!isValidIdFormat(gameId)) {
       return res.status(400).json({ message: "Invalid game ID" });
@@ -118,21 +139,30 @@ export const editGame = async (req, res) => {
 
     const updatedData = req.body;
 
-    // If there's a new image, upload it to Cloudinary
+    // Parse cutyLinks if sent as string
+    if (updatedData.cutyLinks && typeof updatedData.cutyLinks === "string") {
+      updatedData.cutyLinks = JSON.parse(updatedData.cutyLinks);
+    }
+
+    updatedData.accounts = updatedData.cutyLinks?.length || 0;
+
+    // Upload new image if available
     if (req.file) {
-        const imageFile = req.file;
-        const imagePath = await handleFileUpload(imageFile, uploadImage, "Image");
-        updatedData.image = imagePath;
+      const imageFile = req.file;
+      const imagePath = await handleFileUpload(imageFile, uploadImage, "Image");
+      updatedData.image = imagePath;
     }
 
     const updatedGame = await gameModel.findByIdAndUpdate(gameId, updatedData, { new: true });
-    await res.status(200).json({ message: "Game updated successfully", game: updatedGame });
+
+    res.status(200).json({ status: true, message: "Game updated successfully", game: updatedGame });
 
   } catch (error) {
     console.error("Error updating game:", error);
     res.status(500).json({ message: "Error updating game", error });
   }
 };
+
 
 
 
@@ -163,7 +193,7 @@ export const deleteGame = async (req, res) => {
 
 
 
-// Function to handle file uploads
+
 const handleFileUpload = async (file, uploadFunction, type) => {
     if (file) {
         try {

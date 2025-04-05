@@ -14,7 +14,7 @@ const Sidebar = () => {
     const menuItems = [
         { text: "Dashboard", icon: <Home />, path: "/" },
         { text: "Games List", icon: <Gamepad />, path: "/games" },
-        { text: "Add Game", icon: <AddBox />, path: "/add-game" },
+        { text: "Add Game", icon: <AddBox />, path: "/add-game/new" },
         { text: "Manage Games", icon: <Edit />, path: "/manage-games" }
     ];
 

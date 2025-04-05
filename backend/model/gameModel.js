@@ -9,8 +9,6 @@ const gameSchema = new mongoose.Schema({
   releaseDate: { type: Date },
   rating: { type: Number, min: 0, max: 10 },
   cutyLinks: [{ type: String }], // Multiple Cuty.io links
-  accounts: { type: Number, default: 0 },
-  clicks: { type: Number, default: 0 },
   added: { type: Date, default: Date.now },
 });
 

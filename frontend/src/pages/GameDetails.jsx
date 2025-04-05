@@ -20,12 +20,10 @@ import Navbar from "../components/Navbar";
 
 // Fetch single game by ID
 const fetchGameById = async (id) => {
-  if (typeof id !== 'string' || !/^\d+$/.test(id)) {
-    throw new Error('Invalid ID format');
-  }
+  
   try {
     const res = await axios.get(`http://localhost:5000/api/game/${id}`);
-    return res.data;
+    return res.data.game;
   } catch (error) {
     console.error(`Error fetching game with ID ${id}:`, error);
     throw error;
@@ -44,8 +42,8 @@ const GameDetails = () => {
   const [selectedLink, setSelectedLink] = useState("");
 
   useEffect(() => {
-    if (game && game.links && game.links.length > 0) {
-      setSelectedLink(game.links[0]);
+    if (game && game.cutyLinks && game.cutyLinks.length > 0) {
+      setSelectedLink(game.cutyLinks[0]);
     }
   }, [game]);
 
@@ -94,11 +92,9 @@ const GameDetails = () => {
               {game.description}
             </Typography>
             <Typography variant="body2" color="gray">
-              Publisher: {game.publisher} | Release Date: {game.releaseDate}
+              Publisher: {game.publisher} | Release Date: {game.releaseDate.split("T")[0]}
             </Typography>
-            <Typography variant="body2" color="gray">
-              Platforms: {game.platforms.join(", ")}
-            </Typography>
+            
 
             <Box sx={{ display: "flex", alignItems: "center", mt: 3, gap: 2 }}>
               <Typography
@@ -111,7 +107,7 @@ const GameDetails = () => {
                   fontWeight: "bold",
                 }}
               >
-                Rating: {game.rating}
+                Rating: {game.rating} / 5
               </Typography>
               <Typography
                 variant="h6"
@@ -123,7 +119,7 @@ const GameDetails = () => {
                   fontWeight: "bold",
                 }}
               >
-                {game.accounts} Accounts Available
+                {game.cutyLinks.length} Accounts Available
               </Typography>
             </Box>
 
@@ -146,7 +142,7 @@ const GameDetails = () => {
                   },
                 }}
               >
-                {`Get Link ${game.links.indexOf(selectedLink) + 1}`}
+                {`Get Link ${game.cutyLinks.indexOf(selectedLink) + 1}`}
               </Button>
 
               <FormControl
@@ -162,7 +158,7 @@ const GameDetails = () => {
               >
                 <InputLabel sx={{ color: "gray" }}>Select Link</InputLabel>
                 <Select value={selectedLink} onChange={(e) => setSelectedLink(e.target.value)} label="Select Link">
-                  {game.links.map((link, index) => (
+                  {game.cutyLinks.map((link, index) => (
                     <MenuItem key={index} value={link}>
                       {`Link ${index + 1}`}
                     </MenuItem>
