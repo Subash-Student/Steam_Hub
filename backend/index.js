@@ -20,7 +20,7 @@ const PORT = process.env.PORT;
 app.use(express.json());
 const allowedOrigins = [
     'https://steam-hub-nimda.vercel.app',
-    'https://steam-hub-red.vercel.app/',
+    'https://steam-hub-red.vercel.app',
     'http://localhost:5174/',
     'http://localhost:5173/',
   ];
