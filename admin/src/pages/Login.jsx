@@ -21,7 +21,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/admin-login', formData);
+      const res = await axios.post('https://steam-hub-backend.vercel.app/api/admin-login', formData);
       localStorage.setItem('token', res.data.token);
       setError('');
       navigate('/');

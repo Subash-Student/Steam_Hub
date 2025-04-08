@@ -11,7 +11,7 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom"
 const fetchGames = async () => {
   try {
-    const { data } = await axios.get("http://localhost:5000/api/all-games"); 
+    const { data } = await axios.get("https://steam-hub-backend.vercel.app/api/all-games"); 
     return data;
   } catch (error) {
     console.error("Error fetching games:", error);
@@ -81,7 +81,7 @@ const GameList = () => {
     if (!confirm) return;
   
     try {
-      await axios.delete(`http://localhost:5000/api/delete-game/${id}`,{
+      await axios.delete(`https://steam-hub-backend.vercel.app/api/delete-game/${id}`,{
         headers:{
           token:localStorage.getItem("token")
         }

@@ -14,7 +14,7 @@ const categories = ["FPS", "MOBA", "Battle Royale", "RPG", "Adventure", "Strateg
 
 const fetchGames = async () => {
   try {
-    const res = await axios.get("http://localhost:5000/api/all-games", {
+    const res = await axios.get("https://steam-hub-backend.vercel.app/api/all-games", {
       timeout: 5000,
     });
     return res.data;

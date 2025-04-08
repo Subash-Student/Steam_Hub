@@ -22,7 +22,7 @@ import Navbar from "../components/Navbar";
 const fetchGameById = async (id) => {
   
   try {
-    const res = await axios.get(`http://localhost:5000/api/game/${id}`);
+    const res = await axios.get(`https://steam-hub-backend.vercel.app/api/game/${id}`);
     return res.data.game;
   } catch (error) {
     console.error(`Error fetching game with ID ${id}:`, error);

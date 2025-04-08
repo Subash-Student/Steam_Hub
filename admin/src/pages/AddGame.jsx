@@ -39,7 +39,7 @@ const AddGame = () => {
   useEffect(() => {
     if (isEditMode) {
       setLoading(true);
-      axios.get(`http://localhost:5000/api/game/${id}`)
+      axios.get(`https://steam-hub-backend.vercel.app/api/game/${id}`)
         .then((res) => {
           const game = res.data.game;
           setGameData({
@@ -114,8 +114,8 @@ const AddGame = () => {
 
     try {
       const url = isEditMode
-        ? `http://localhost:5000/api/edit-game/${id}`
-        : "http://localhost:5000/api/add-game";
+        ? `https://steam-hub-backend.vercel.app/api/edit-game/${id}`
+        : "https://steam-hub-backend.vercel.app/api/add-game";
 
       const method = isEditMode ? axios.put : axios.post;
       const response = await method(url, formData,{

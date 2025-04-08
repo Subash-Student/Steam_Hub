@@ -18,7 +18,27 @@ const PORT = process.env.PORT;
 // SETUP MIDDLEWARES
 
 app.use(express.json());
-app.use(cors());
+const allowedOrigins = [
+    'https://steam-hub-nimda.vercel.app',
+    'https://steam-hub-red.vercel.app/',
+    'http://localhost:5174/',
+    'http://localhost:5173/',
+  ];
+  
+  const corsOptions = {
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: 'GET,POST,PUT,DELETE,PATCH',
+    allowedHeaders: ['Content-Type', 'Authorization', 'token'],
+    credentials: true,
+  };
+  app.use(cors(corsOptions));
+  app.options('*', cors(corsOptions));
 
 
 
